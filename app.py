@@ -1,10 +1,10 @@
+# Imports
 import streamlit as st
 import pandas as pd
 import numpy as np
 from prediction import predict
 import joblib
 from scipy.stats import boxcox
-
 
 # function to transform user input to suitable format expected by SVM model
 def transform_input(df_encoded, lambdas):
@@ -36,8 +36,10 @@ st.set_page_config(
 header = st.container()
 content = st.container()
 
-st.write("")    # black line
+# blank line
+st.write("")
  
+# header container
 with header:   
     # title and description
     st.title('Predicting Heart Disease')
@@ -45,14 +47,17 @@ with header:
 
     # Header
     st.header("Heart Disease", divider="violet")
-    
+
+# content container
 with content:
     main_col1, main_col2 = st.columns([7, 5])
+    # main column 1
     with main_col1:
         # form to get user input for patient data
         with st.form("Preidct"):
-            col1, col2, col3 = st.columns(3)
+            col1, col2, col3 = st.columns(3)    # define 3 columns
             
+            # column 1
             with col1:
         
                 age = st.number_input('Age in Years (age)', 0, 100, 0, 1)
@@ -62,9 +67,9 @@ with content:
                 chol = st.number_input('Serum Cholestoral in mg/dl (chol)', 100, 600, 100, 1)
                 
                 thalach = st.number_input('Max Heart Rate Achieved (thalach)', 50, 250, 50, 1)
-                
+            
+            # column 2
             with col2:
-                
                 
                 oldpeak = st.number_input('ST Depression Induced by Exercise Relative to Rest (oldpeak)', 0.0, 8.0, 0.0, 0.1)
         
@@ -72,10 +77,11 @@ with content:
                 
                 cp = st.selectbox("Select Chest Pain Type (cp)", options=["Typical Angina", "Atypical Angina", "Non-Anginal Pain", "Asymptomatic"], index=0)
                 
-                fbs = st.selectbox("Fasting Blood Sugar", options=["Less Than 120 mg/dl", "Greater Than 120 mg/dl"], index=0)
+                fbs = st.selectbox("Fasting Blood Sugar (fbs)", options=["Less Than 120 mg/dl", "Greater Than 120 mg/dl"], index=0)
                 
-                restecg = st.selectbox("Resting Electrocardiographic Results", options=["Normal", "Abnormal", "Ventricular Hypertrophy"], index=0)
+                restecg = st.selectbox("Resting Electrocardiographic Results (restecg)", options=["Normal", "Abnormal", "Ventricular Hypertrophy"], index=0)
                 
+            # column 3
             with col3:
                 
                 exang = st.selectbox("Exercise Induced Angina (exang)", options=["Yes", "No"], index=0)
@@ -89,19 +95,24 @@ with content:
 
             # prediciton button
             predict_btn = st.form_submit_button("Predict❤️", use_container_width=True)
-        
+    
+    # main column 2
     with main_col2:
+        
+        # when prediction button is clicked
         if predict_btn:
             
+            # define numeric variables
             patient_age = age
             patient_trestbps = trestbps
             patient_chol = chol
             patient_thalach = thalach
             patient_oldpeak= oldpeak
             
-            # perform manual data encoding
             
-            patient_sex = 0
+            # Perform manual data encoding for categorical variables
+            
+            patient_sex = 0 # Female
             if sex == "Male":
                 patient_sex = 1
                 
@@ -117,13 +128,13 @@ with content:
             if fbs == "Less Than 120 mg/dl":
                 patient_fbs = 0
                 
-            patient_restecg = [0, 0]    # normal
+            patient_restecg = [0, 0]    # Normal
             if restecg == "Abnormal":
                 patient_restecg = [1, 0]
             elif restecg == "Ventricular Hypertrophy":
                 patient_restecg = [0, 1]
                 
-            patient_exang = 0
+            patient_exang = 0   # No
             if patient_exang == "Yes":
                 patient_exang = 1
                 
@@ -142,12 +153,11 @@ with content:
                 patient_slope = [0, 1]
             
             
-            # data list to store patient data
+            # define data list to store patient data
             data = [patient_age, patient_sex, patient_trestbps, patient_chol, patient_fbs, patient_thalach, patient_exang, patient_oldpeak, patient_slope, patient_ca]
-            data.extend(patient_cp)
-            data.extend(patient_restecg)
-            data.extend(patient_thal)
-            print(data)
+            data.extend(patient_cp) # extend list
+            data.extend(patient_restecg)    # extend list
+            data.extend(patient_thal)   # extend list
             
             # define column names
             coulmn_names = ['age', 'sex', 'trestbps', 'chol', 'fbs', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'cp_1', 'cp_2', 'cp_3', 'restecg_1', 'restecg_2', 'thal_2', 'thal_3']
@@ -156,6 +166,7 @@ with content:
             # note that data is already encoded with the above if statements
             df_encoded = pd.DataFrame([data], columns=coulmn_names)
             
+        # If manual data encoding was not completed, the following code could have been executed. (note that dummy_columns.pkl would have to be saved to disk in the model python file first)
         # # Apply categorical encoding
         # input_df = pd.get_dummies(input_df)
 
@@ -173,34 +184,11 @@ with content:
             # call predict from prediction.py file on the dataframe
             prediction = predict(df_encoded)
             
-            if prediction[0] == 1:
+            # Check prediction value and output relevant message
+            if prediction[0] == 1:  # patient has heart disease
                 st.header(":violet[Prediction is:]", divider='red')
                 st.header(f":red[Patient has heart disease ❤️‍🩹😢]", divider='red')
-            else:
+            else:   # patients does not have heart disease
                 st.header(":violet[Prediction is:]", divider='green')
                 st.header(f":green[Patient does not have heart disease ❤️😁] ", divider='green')
                 
-            
-            
-            
-        
-        
-
-# https://github.com/modyehab810/Heart-Failure-Prediction/blob/main/main.py
-#!!!!!!!!!!!!!! check what they did at the bottom and see i you can get the result to look better
-
-# https://365datascience.com/tutorials/machine-learning-tutorials/how-to-deploy-machine-learning-models-with-python-and-streamlit/
-
-# age = integer (0-100)
-# sex = binary (0-1)
-# cp = integer (0-3)
-# trestbps = integer(0-250)
-# chol = integer (0-700)
-# fbs = binary (0-1)
-# thalach = integer (0-300)
-# exang = binary (0-1)
-# oldpeak = decimal (1 d.p.0-10)
-# slop = integer (0-2)
-# ca = integer (0-4)
-# thal = integet (1-3)
-# target = binary (0-1)
