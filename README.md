@@ -15,7 +15,10 @@ Pip: Python package installer. It comes with Python by default.
     ```
     pip install streamlit joblib scikit-learn sklearn scipy seaborn numpy pandas
     ```
-
+    OR run:
+   ```
+    pip install -r requirements.txt
+   ```
 ## Run model.py
 ```
     python model.py
