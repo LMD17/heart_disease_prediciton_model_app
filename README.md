@@ -1,6 +1,6 @@
 # ITDAA4-12 - Heart Prediciton Streamlit App
 
-Streamlit Web App link: https://heartdiseasepredicitonmodelapp-dvdsolyraihyydknwxqmm3.streamlit.app/
+Streamlit Web App link (now inactive): https://heartdiseasepredicitonmodelapp-dvdsolyraihyydknwxqmm3.streamlit.app/
 
 ## Introduction
 The webapp provides a model to determine if a patient has heart disease. The user (doctor) can input the patients information and the SVM model predict whether the patient has heart disease and needs treatement, or the patient does not have heart disease.
@@ -38,3 +38,7 @@ This will perform
     streamlit run app.py   
 ```
 This will run the Streamlit app and allow the user to make heart disease predicitons.
+
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
